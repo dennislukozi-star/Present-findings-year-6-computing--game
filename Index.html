@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Present-findings-year-6-computing--game</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --accent2: #38bdf8;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(160deg, #020617, #0f172a 45%, #082f49);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .hero, .panel {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+    .hero {
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+    }
+    .subtitle, .small { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+    }
+    .panel { padding: 18px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid rgba(148,163,184,0.12);
+    }
+    .label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .value {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(56,189,248,0.15);
+      border: 1px solid rgba(56,189,248,0.35);
+      color: #bae6fd;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    .question {
+      font-size: 1.35rem;
+      margin: 0 0 10px;
+    }
+    .scenario {
+      line-height: 1.5;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .answers {
+      display: grid;
+      gap: 10px;
+    }
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 16px;
+      transition: transform .12s ease, opacity .12s ease;
+    }
+    button:hover { transform: translateY(-1px); }
+    .answer {
+      width: 100%;
+      text-align: left;
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid rgba(148,163,184,0.16);
+    }
+    .answer.correct { background: rgba(34,197,94,0.22); border-color: rgba(34,197,94,0.8); }
+    .answer.wrong { background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.8); }
+    .primary { background: linear-gradient(135deg, var(--accent), #16a34a); color: #052e16; font-weight: 700; }
+    .secondary { background: linear-gradient(135deg, var(--accent2), #0284c7); color: #082f49; font-weight: 700; }
+    .ghost { background: #1e293b; color: var(--text); border: 1px solid rgba(148,163,184,0.18); }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .feedback {
+      min-height: 28px;
+      font-weight: 700;
+      margin-top: 12px;
+    }
+    .good { color: #86efac; }
+    .bad { color: #fca5a5; }
+    .warn { color: #fcd34d; }
+    .side {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid rgba(148,163,184,0.12);
+      margin-bottom: 14px;
+    }
+    .side h2 { margin-top: 0; font-size: 1.05rem; }
+    .side ul { color: var(--muted); line-height: 1.6; padding-left: 20px; }
+    .progress {
+      height: 14px;
+      background: #0f172a;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.12);
+      margin-bottom: 18px;
+    }
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #22c55e);
+      transition: width .25s ease;
+    }
+    .result {
+      text-align: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.72);
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.14);
+    }
+    .big-score {
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      margin: 12px 0;
+      color: #bbf7d0;
+    }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Present-findings-year-6-computing--game</h1>
+      <p class="subtitle">A Year 6 computing quiz game about collecting data, choosing the best way to present findings, and sharing results clearly.</p>
+    </section>
+
+    <div class="grid">
+      <main class="panel">
+        <div class="stats">
+          <div class="stat"><span class="label">Score</span><span class="value" id="score">0</span></div>
+          <div class="stat"><span class="label">Question</span><span class="value" id="qnum">0/0</span></div>
+          <div class="stat"><span class="label">Time</span><span class="value" id="time">60</span></div>
+          <div class="stat"><span class="label">Best</span><span class="value" id="best">0</span></div>
+        </div>
+
+        <div class="progress"><div class="fill" id="fill"></div></div>
+
+        <div id="stage">
+          <span class="badge">Mission Start</span>
+          <h2 class="question">Ready to become a Computing Findings Presenter?</h2>
+          <p class="scenario">Answer the questions before the timer ends. Pick the best answer and try to beat your high score.</p>
+          <div class="controls">
+            <button class="primary" id="startBtn">Start Game</button>
+            <button class="secondary" id="howBtn">How to Play</button>
+          </div>
+          <p class="feedback warn" id="globalFeedback">Correct answers are not shown until after a choice is made.</p>
+        </div>
+      </main>
+
+      <aside class="panel">
+        <div class="side">
+          <h2>Skills in this game</h2>
+          <ul>
+            <li>Choosing charts and graphs</li>
+            <li>Understanding facts and opinions</li>
+            <li>Designing clear slides</li>
+            <li>Using online information safely</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h2>Game controls</h2>
+          <ul>
+            <li>Click an answer to choose it</li>
+            <li>Press 1, 2, 3 or 4 on a keyboard</li>
+            <li>Press Enter to start or replay</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        badge: 'Data Detective',
+        question: 'Your class asked 60 pupils about their favourite device. Which is the best way to present how many chose each device?',
+        scenario: 'You need to compare groups such as tablet, laptop, desktop and phone.',
+        answers: ['Bar chart', 'Paragraph of text only', 'Random picture collage', 'Audio recording only'],
+        correct: 0,
+        explain: 'A bar chart is best for comparing different categories clearly.'
+      },
+      {
+        badge: 'Truth Checker',
+        question: 'Which statement is a fact rather than an opinion?',
+        scenario: 'You are preparing a slide about internet use in school.',
+        answers: ['Tablets are the coolest device', 'Our survey had 32 responses', 'Blue slides look best', 'This presentation is amazing'],
+        correct: 1,
+        explain: 'A fact can be checked. The number of survey responses is measurable.'
+      },
+      {
+        badge: 'Slide Designer',
+        question: 'Which slide design choice helps an audience understand your findings best?',
+        scenario: 'You are making a presentation for Year 6 pupils and teachers.',
+        answers: ['Tiny text with lots of colours', 'One clear title, key points and simple images', 'A full page of copied text', 'Flashing animations on every slide'],
+        correct: 1,
+        explain: 'Clear titles, short points and simple visuals make presentations easier to follow.'
+      },
+      {
+        badge: 'Chart Master',
+        question: 'When is a pie chart most useful?',
+        scenario: 'You want to show parts of a whole.',
+        answers: ['When showing steps in a method', 'When comparing unrelated stories', 'When showing how one total is split into parts', 'When writing a speech script'],
+        correct: 2,
+        explain: 'Pie charts work best when you want to show proportions of one whole.'
+      },
+      {
+        badge: 'Online Safety',
+        question: 'You want to include survey comments from classmates. What should you do first?',
+        scenario: 'Your presentation may be shown to other classes.',
+        answers: ['Share everyone\'s full names', 'Check permission and keep personal information private', 'Post the comments online immediately', 'Change the comments to make them funnier'],
+        correct: 1,
+        explain: 'Protecting privacy and using information respectfully is important.'
+      },
+      {
+        badge: 'Audience Expert',
+        question: 'Why should you think about your audience before presenting findings?',
+        scenario: 'You could present to children, teachers or parents.',
+        answers: ['So you can choose suitable words and details', 'So you can make the slides harder to read', 'So you can avoid checking facts', 'So you can make it as long as possible'],
+        correct: 0,
+        explain: 'Different audiences need different vocabulary, detail and presentation styles.'
+      },
+      {
+        badge: 'Question Builder',
+        question: 'Which survey question is the clearest?',
+        scenario: 'You want good data for your findings.',
+        answers: ['Do you like good apps?', 'Which app do you use most for homework?', 'Why is computing the best subject ever?', 'Tell me everything about technology'],
+        correct: 1,
+        explain: 'A clear survey question gives focused answers that are easier to analyse.'
+      },
+      {
+        badge: 'Presentation Coach',
+        question: 'What is the best thing to do when speaking during your presentation?',
+        scenario: 'You want the audience to stay interested.',
+        answers: ['Read every word from the slide', 'Turn your back to the audience', 'Speak clearly and explain the key findings', 'Rush so it finishes quickly'],
+        correct: 2,
+        explain: 'The speaker should explain the most important points clearly and confidently.'
+      },
+      {
+        badge: 'Data Choice',
+        question: 'You recorded the number of hours pupils spend online each week. What would help you spot the highest and lowest values quickly?',
+        scenario: 'You are reviewing numerical results.',
+        answers: ['A sorted table or graph', 'A song about the data', 'An unrelated photo', 'A slide with no labels'],
+        correct: 0,
+        explain: 'Sorted tables or graphs make patterns, highs and lows easier to see.'
+      },
+      {
+        badge: 'Final Challenge',
+        question: 'What makes a strong conclusion slide?',
+        scenario: 'You are ending your presentation.',
+        answers: ['Brand new facts that were never explained', 'A summary of the main findings and what they mean', 'A giant block of text in tiny font', 'No title and no explanation'],
+        correct: 1,
+        explain: 'A conclusion should summarise the findings and explain the main message.'
+      }
+    ];
+
+    const scoreEl = document.getElementById('score');
+    const qnumEl = document.getElementById('qnum');
+    const timeEl = document.getElementById('time');
+    const bestEl = document.getElementById('best');
+    const fillEl = document.getElementById('fill');
+    const stageEl = document.getElementById('stage');
+    const globalFeedback = document.getElementById('globalFeedback');
+    const startBtn = document.getElementById('startBtn');
+    const howBtn = document.getElementById('howBtn');
+
+    let shuffled = [];
+    let current = 0;
+    let score = 0;
+    let timeLeft = 60;
+    let timer = null;
+    let locked = false;
+    let best = Number(localStorage.getItem('present-findings-best') || 0);
+    bestEl.textContent = best;
+
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function home() {
+      clearInterval(timer);
+      current = 0;
+      score = 0;
+      timeLeft = 60;
+      scoreEl.textContent = '0';
+      qnumEl.textContent = '0/0';
+      timeEl.textContent = '60';
+      timeEl.style.color = '#e5e7eb';
+      fillEl.style.width = '0%';
+      stageEl.innerHTML = `
+        <span class="badge">Mission Start</span>
+        <h2 class="question">Ready to become a Computing Findings Presenter?</h2>
+        <p class="scenario">Answer the questions before the timer ends. Pick the best answer and try to beat your high score.</p>
+        <div class="controls">
+          <button class="primary" id="startBtn2">Start Game</button>
+          <button class="secondary" id="howBtn2">How to Play</button>
+        </div>
+        <p class="feedback warn">Correct answers are not shown until after a choice is made.</p>
+      `;
+      document.getElementById('startBtn2').addEventListener('click', startGame);
+      document.getElementById('howBtn2').addEventListener('click', showHelp);
+      globalFeedback.textContent = 'Ready to play.';
+      globalFeedback.className = 'feedback warn';
+    }
+
+    function showHelp() {
+      stageEl.innerHTML = `
+        <span class="badge">Instructions</span>
+        <h2 class="question">How to Play</h2>
+        <p class="scenario">Choose the best answer for each question. Correct answers give points and faster answers give bonus points.</p>
+        <div class="side" style="margin:0;">
+          <ul>
+            <li>Questions are shuffled each time.</li>
+            <li>Correct answers are only highlighted after you pick one.</li>
+            <li>Use keys 1, 2, 3 or 4 to answer.</li>
+            <li>Your best score is saved on the device.</li>
+          </ul>
+        </div>
+        <div class="controls">
+          <button class="primary" id="beginBtn">Begin Now</button>
+          <button class="ghost" id="backBtn">Back</button>
+        </div>
+      `;
+      document.getElementById('beginBtn').addEventListener('click', startGame);
+      document.getElementById('backBtn').addEventListener('click', home);
+    }
+
+    function startGame() {
+      shuffled = shuffle(questions);
+      current = 0;
+      score = 0;
+      timeLeft = 60;
+      locked = false;
+      scoreEl.textContent = '0';
+      qnumEl.textContent = `1/${shuffled.length}`;
+      timeEl.textContent = '60';
+      timeEl.style.color = '#e5e7eb';
+      fillEl.style.width = '0%';
+      globalFeedback.textContent = 'Game started.';
+      globalFeedback.className = 'feedback warn';
+
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        timeEl.textContent = timeLeft;
+        if (timeLeft <= 10) timeEl.style.color = '#fca5a5';
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      locked = false;
+      const q = shuffled[current];
+      fillEl.style.width = `${(current / shuffled.length) * 100}%`;
+
+      stageEl.innerHTML = `
+        <span class="badge">${q.badge}</span>
+        <h2 class="question">${q.question}</h2>
+        <p class="scenario">${q.scenario}</p>
+        <div class="answers">
+          ${q.answers.map((a, i) => `
+            <button class="answer" data-index="${i}"><strong>${i + 1}.</strong> ${a}</button>
+          `).join('')}
+        </div>
+        <p class="feedback warn" id="localFeedback">Choose an answer.</p>
+        <div class="controls">
+          <button class="ghost" id="skipBtn">Skip Question</button>
+        </div>
+      `;
+
+      document.querySelectorAll('.answer').forEach(btn => {
+        btn.addEventListener('click', () => chooseAnswer(Number(btn.dataset.index)));
+      });
+
+      document.getElementById('skipBtn').addEventListener('click', () => {
+        globalFeedback.textContent = 'Question skipped.';
+        globalFeedback.className = 'feedback warn';
+        nextQuestion();
+      });
+    }
+
+    function chooseAnswer(index) {
+      if (locked) return;
+      locked = true;
+
+      const q = shuffled[current];
+      const buttons = [...document.querySelectorAll('.answer')];
+      const localFeedback = document.getElementById('localFeedback');
+
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.correct) btn.classList.add('correct');
+        if (i === index && i !== q.correct) btn.classList.add('wrong');
+      });
+
+      if (index === q.correct) {
+        const bonus = Math.max(1, Math.ceil(timeLeft / 6));
+        score += 10 + bonus;
+        scoreEl.textContent = score;
+        localFeedback.textContent = `Correct! ${q.explain} Bonus +${bonus}`;
+        localFeedback.className = 'feedback good';
+        globalFeedback.textContent = 'Great job.';
+        globalFeedback.className = 'feedback good';
+      } else {
+        localFeedback.textContent = `Not quite. ${q.explain}`;
+        localFeedback.className = 'feedback bad';
+        globalFeedback.textContent = 'Keep trying.';
+        globalFeedback.className = 'feedback bad';
+      }
+
+      setTimeout(nextQuestion, 1600);
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current >= shuffled.length) {
+        endGame();
+        return;
+      }
+      qnumEl.textContent = `${current + 1}/${shuffled.length}`;
+      renderQuestion();
+    }
+
+    function endGame() {
+      clearInterval(timer);
+      fillEl.style.width = '100%';
+      if (score > best) {
+        best = score;
+        localStorage.setItem('present-findings-best', String(best));
+        bestEl.textContent = best;
+      }
+
+      let message = 'Nice work!';
+      if (score >= 120) message = 'Outstanding presenting skills!';
+      else if (score >= 85) message = 'Excellent job.';
+      else if (score >= 55) message = 'Good effort.';
+      else message = 'Keep practising.';
+
+      stageEl.innerHTML = `
+        <div class="result">
+          <span class="badge">Mission Complete</span>
+          <h2 class="question">${message}</h2>
+          <div class="big-score">${score}</div>
+          <p class="scenario">Final score: <strong>${score}</strong><br>Best score: <strong>${best}</strong></p>
+          <div class="controls" style="justify-content:center;">
+            <button class="primary" id="replayBtn">Play Again</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('replayBtn').addEventListener('click', startGame);
+      globalFeedback.textContent = 'Game over.';
+      globalFeedback.className = 'feedback warn';
+    }
+
+    startBtn.addEventListener('click', startGame);
+    howBtn.addEventListener('click', showHelp);
+
+    document.addEventListener('keydown', (e) => {
+      const answers = [...document.querySelectorAll('.answer')];
+      if (['1','2','3','4'].includes(e.key) && answers.length) {
+        const idx = Number(e.key) - 1;
+        if (answers[idx]) answers[idx].click();
+      }
+      if (e.key === 'Enter') {
+        const beginBtn = document.getElementById('beginBtn');
+        const replayBtn = document.getElementById('replayBtn');
+        const startBtn2 = document.getElementById('startBtn2');
+        if (beginBtn) beginBtn.click();
+        else if (replayBtn) replayBtn.click();
+        else if (startBtn2) startBtn2.click();
+      }
+    });
+  </script>
+</body>
+</html>
